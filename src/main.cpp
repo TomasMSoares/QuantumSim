@@ -1,5 +1,6 @@
 #include "State.h"
 
+
 int main(int argc, char** argv){
     std::cout << "Welcome to my Quantum Circuit Simulator!" << std::endl;
     State init{};
@@ -10,8 +11,6 @@ int main(int argc, char** argv){
     if (init.isValid()){
         std::cout << "Valid state!" << std::endl;
     }
-
-    
 
     return 0;
 }

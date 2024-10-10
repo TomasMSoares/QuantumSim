@@ -1,5 +1,6 @@
 #include "State.h"
 
+
 bool State::isValid(){
     double sum = 0;
     for (const auto& e : _state){

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <bitset>
 
+
 // not sure if we should go lower, using this threshold for most computations
 static constexpr double EPS = 1e-8;
 
