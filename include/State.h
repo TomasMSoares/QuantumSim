@@ -1,12 +1,9 @@
-#include <unordered_map>
+#include <vector>  
 #include <complex>
 #include <cmath>
 #include <iostream>
 #include <bitset>
-
-
-// not sure if we should go lower, using this threshold for most computations
-static constexpr double EPS = 1e-8;
+#include "utils.h"
 
 class State {
 public:
@@ -14,12 +11,17 @@ public:
     /*
     Initializes quantum state vector with one qubit.
     */
-    State() : _qubitNr(1), _possibleStates(2) {}
+    State() : _state(2, 0.0), _qubitNr(1) {}
 
     /*
     Initializes quantum state vector with the specified amount of qubits.
     */
-    State(size_t qubits) : _qubitNr(qubits), _possibleStates(1 << qubits) {}
+    State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {}
+
+    /*
+    Returns the sum of all amplitudes squared.
+    */
+    double getSumOfSquares();
 
     /*
     Returns true if the set of amplitudes in the statevector is valid.
@@ -39,7 +41,6 @@ public:
 
 private:
     // might want to add a non sparse representation later, as a vector
-    std::unordered_map<int, std::complex<double>> _state;
+    std::vector<std::complex<double>> _state;
     const size_t _qubitNr;
-    const size_t _possibleStates;
 };
