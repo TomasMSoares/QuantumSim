@@ -2,7 +2,6 @@
 #include <complex>
 #include <cmath>
 #include <iostream>
-#include <bitset>
 #include "utils.h"
 
 class State {
@@ -40,7 +39,6 @@ public:
 
 
 private:
-    // might want to add a non sparse representation later, as a vector
     std::vector<std::complex<double>> _state;
     const size_t _qubitNr;
 };
