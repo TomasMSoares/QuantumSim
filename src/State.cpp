@@ -32,3 +32,46 @@ void State::printState(){
     }
     std::cout << std::endl;
 }
+
+bool State::parseVector(const std::string& filename){
+    std::ifstream file(filename);
+    if (!file){
+        std::cerr << "Couldn't open file: " << filename << std::endl;
+        return false;
+    }
+
+    std::string line;
+    if (!std::getline(file, line)){
+        std::cerr << "Qubit number can't be empty!" << std::endl;
+    }
+    line = trim(line);
+    std::istringstream qubitstream(line);
+    size_t qubits;
+    std::string label;
+    char equals;
+
+    if (!(qubitstream >> label >> equals >> qubits)
+    || label != "qubits" || equals != '=') {
+        std::cerr << "Couldn't parse qubit number." << std::endl;
+        return false;
+    }
+    _qubitNr = qubits;
+
+    if (!std::getline(file, line)){
+        std::cerr << "Amplitudes can't be empty!" << std::endl;
+    }
+    std::istringstream amplitudestream(line);
+    std::string ampStr;
+    size_t idx = 0;
+    while (std::getline(amplitudestream, ampStr)){
+        _state[idx] = readComplex(ampStr);
+        ++idx;
+    }
+
+    if(idx != (1 << qubits) - 1){
+        std::cerr << "Amplitude count mismatch: expected " << qubits <<
+        " but got " << (idx + 1) << std::endl;
+        return false;
+    }
+    return true;
+}

@@ -2,10 +2,11 @@
 
 #include "utils.h"
 #include "State.h"
+#include <vector>
 
 
 int main(int argc, char** argv){
-    std::cout << "Welcome to my Quantum Circuit Simulator!" << std::endl;
+    // std::cout << "Welcome to my Quantum Circuit Simulator!" << std::endl;
     
     // std::string vec_file;
     // int opt;
@@ -30,24 +31,15 @@ int main(int argc, char** argv){
     //     printHelp();
     //     return 1;
     // }
+    std::vector<std::string> complexTest(4);
 
-
-
-    // return 0;
-
-    State init(2);
-    init.updateAmplitude(0, {1.0/sqrt(6), 1.0/sqrt(6)});
-    init.updateAmplitude(1, {1.0/std::sqrt(3), 0.0});
-    init.updateAmplitude(3, {-1.0/sqrt(6), 1.0/sqrt(6)});
-
-    if (init.isValid()) std::cout << "Valid state!" << std::endl;
-    else {
-        std::cout << "Invalid state." << std::endl;
-        std::cout << "Sum of squares is: " << init.getSumOfSquares() << std::endl;
-        return 1;
+    complexTest[0] = "2i";
+    complexTest[1] = "1-0.443i";
+    complexTest[2] = "0.4254+i";
+    complexTest[3] = "0.333";
+    
+    for (auto &e : complexTest){
+        auto z = readComplex(e);
+        std::cout << toString(z) << std::endl;
     }
-
-    init.printState();
-
-    return 0;
 }

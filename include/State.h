@@ -2,6 +2,8 @@
 #include <complex>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+
 #include "utils.h"
 
 class State {
@@ -16,6 +18,8 @@ public:
     Initializes quantum state vector with the specified amount of qubits.
     */
     State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {}
+
+    bool parseVector(const std::string& filename);
 
     /*
     Returns the sum of all amplitudes squared.
@@ -40,5 +44,5 @@ public:
 
 private:
     std::vector<std::complex<double>> _state;
-    const size_t _qubitNr;
+    size_t _qubitNr;
 };
