@@ -37,6 +37,14 @@ void handleCommand(const std::string& command, State& s){
     else if (command == "show") {
         s.printState();
     }
+    else if (command == "check") {
+        if (s.isValid()){
+            std::cout << "State is valid!" << std::endl;
+        }
+        else {
+            std::cout << "State is invalid!" << std::endl; 
+        }
+    }
     else if (command == "exit") {
         std::cout << "Exiting the simulator. Bye!" << std::endl;
         exit(0);
