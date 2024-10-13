@@ -10,5 +10,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 add_executable(QuantumCircuit
     src/main.cpp
     src/State.cpp
+    src/Gate.cpp
     src/utils.cpp
 )

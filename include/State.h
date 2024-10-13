@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>  
 #include <complex>
 #include <cmath>
@@ -19,6 +21,19 @@ public:
     */
     State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {}
 
+    /*
+    Access to the state
+    */
+    std::complex<double>& operator[] (size_t idx);
+
+    /*
+    Returns the amount of qubits that the state contains.
+    */
+    size_t getQubitNr() const;
+
+    /*
+    Reads in vector of amplitudes from the given file. See README.md > Input for details.
+    */
     bool parseVector(const std::string& filename);
 
     /*
@@ -32,14 +47,9 @@ public:
     bool isValid();
 
     /*
-    Sets the amplitude at a specific index.
-    */
-    void updateAmplitude(size_t idx, std::complex<double> value);
-
-    /*
     Provides a representation of the system.
     */
-    void printState();
+    void printState() const;
 
 
 private:
