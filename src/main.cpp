@@ -7,7 +7,7 @@
 void handleCommand(const std::string& command, State& s){
     std::istringstream iss(command);
     std::string gateName;
-    size_t idx;
+    size_t idx; // TODO: check if index is valid here
 
     if (iss >> gateName >> idx) {
         if (gateName == "PauliX") {

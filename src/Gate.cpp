@@ -45,7 +45,21 @@ bool Gate::applyPauliY(State& s){
         std::cerr << "Invalid index: Pauli-Y Gate can only act on one qubit." << std::endl;
         return false;
     }
-    std::cout << "Work in progress..." << std::endl;
+    size_t target = _indices[0];
+    if (target >= s.getQubitNr()){
+        std::cerr << "Error: Index out of range." << std::endl;
+        return false;
+    }
+
+    size_t stateSize = (1 << s.getQubitNr());
+    for (size_t i = 0; i < stateSize; ++i) {
+        size_t flipped = i ^ (1 << target);
+        if (i < flipped){
+            std::swap(s[i], s[flipped]);
+            s[i] *= std::complex<double>(0, 1);
+            s[flipped] *= std::complex<double>(0, -1);
+        }
+    }
     return true;
 }
 
@@ -59,6 +73,7 @@ bool Gate::applyPauliZ(State& s){
         std::cerr << "Error: Index out of range." << std::endl;
         return false;
     }
+
     size_t stateSize = 1 << s.getQubitNr();
     for (int i = 0; i < stateSize; ++i){
         if (i & (1 << target)){
@@ -73,7 +88,24 @@ bool Gate::applyHadamard(State& s){
         std::cerr << "Invalid index: Hadamard Gate can only act on one qubit." << std::endl;
         return false;
     }
-    std::cout << "Work in progress..." << std::endl;
+    size_t target = _indices[0];
+    if (target >= s.getQubitNr()){
+        std::cerr << "Error: Index out of range." << std::endl;
+        return false;
+    }
+
+    std::complex<double> fac(1/sqrt(2), 0);
+    size_t stateSize = (1 << s.getQubitNr());
+
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = i ^ (1 << target);
+        if (i < flipped){
+            std::complex<double> z1 = s[i];
+            std::complex<double> z2 = s[flipped];
+            s[i] = (z1 + z2) * fac;
+            s[flipped] = (z1 - z2) * fac;
+        }
+    }
     return true;
 }
 

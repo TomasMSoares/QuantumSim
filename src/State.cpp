@@ -48,17 +48,31 @@ bool State::parseVector(const std::string& filename) {
     }
 
     line = trim(line);
-    std::istringstream qubitstream(line);
-    size_t qubits;
+    std::string amountStr;
     std::string label;
     char equals;
 
     // Parse the "qubits = <number>" line
-    if (!(qubitstream >> label >> equals >> qubits) || label != "qubits" || equals != '=') {
+    auto equalPos = line.find('=');
+    if (equalPos == std::string::npos) {
         std::cerr << "Couldn't parse qubit number." << std::endl;
         return false;
     }
-    _qubitNr = qubits;
+    label = line.substr(0, equalPos);
+    label = trim(label);
+    amountStr = line.substr(equalPos + 1, line.size() - equalPos);
+    amountStr = trim(amountStr);
+    
+    if (label != "qubits") {
+        std::cerr << "Couldn't parse qubit number." << std::endl;
+        return false;
+    }
+
+    _qubitNr = std::stoul(amountStr);
+    if (!_qubitNr) {
+        std::cerr << "Qubit number can't be 0." << std::endl;
+        return false;
+    }
 
     // Read the line containing the amplitudes
     if (!std::getline(file, line)) {
