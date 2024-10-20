@@ -10,7 +10,7 @@
 #include <iomanip>
 
 // not sure if we should go lower, using this threshold for most computations
-static constexpr double EPS = 1e-8;
+static constexpr double EPS = 1e-6;
 
 /*
 Returns the binary representation of the given value with a fixed number of bits.

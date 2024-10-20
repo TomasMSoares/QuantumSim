@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <random>
 #include "State.h"
 
 enum class GateType {
@@ -10,6 +11,7 @@ enum class GateType {
     PauliY,
     PauliZ,
     Hadamard,
+    Measure,
     Custom
 };
 
@@ -36,4 +38,5 @@ private:
     bool applyPauliZ(State& s);
     bool applyHadamard(State& s);
     bool applyCustomGate(State& s);
+    int measure(State& s);
 };

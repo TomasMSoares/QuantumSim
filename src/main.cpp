@@ -7,31 +7,42 @@
 void handleCommand(const std::string& command, State& s){
     std::istringstream iss(command);
     std::string gateName;
-    size_t idx; // TODO: check if index is valid here
+    size_t idx;
 
     if (iss >> gateName >> idx) {
-        if (gateName == "PauliX") {
-            std::vector<size_t> indices {idx};
-            Gate pauliX(GateType::PauliX, indices);
-            pauliX.apply(s);
-        }
-        else if (gateName == "PauliY") {
-            std::vector<size_t> indices {idx};
-            Gate pauliY(GateType::PauliY, indices);
-            pauliY.apply(s);
-        }
-        else if (gateName == "PauliZ"){
-            std::vector<size_t> indices {idx};
-            Gate pauliZ(GateType::PauliZ, indices);
-            pauliZ.apply(s);
-        }
-        else if (gateName == "Hadamard") {
-            std::vector<size_t> indices {idx};
-            Gate hadamard(GateType::Hadamard, indices);
-            hadamard.apply(s);
+        // first of all check if index is valid
+        if (idx >= s.getQubitNr()){
+            std::cerr << "Error: Index out of range." << std::endl;
         }
         else {
-            std::cerr << "Unknown gate: " << gateName << std::endl;
+            if (gateName == "PauliX") {
+                std::vector<size_t> indices {idx};
+                Gate pauliX(GateType::PauliX, indices);
+                pauliX.apply(s);
+            }
+            else if (gateName == "PauliY") {
+                std::vector<size_t> indices {idx};
+                Gate pauliY(GateType::PauliY, indices);
+                pauliY.apply(s);
+            }
+            else if (gateName == "PauliZ"){
+                std::vector<size_t> indices {idx};
+                Gate pauliZ(GateType::PauliZ, indices);
+                pauliZ.apply(s);
+            }
+            else if (gateName == "Hadamard") {
+                std::vector<size_t> indices {idx};
+                Gate hadamard(GateType::Hadamard, indices);
+                hadamard.apply(s);
+            }
+            else if (gateName == "Measure") {
+                std::vector<size_t> indices {idx};
+                Gate measure(GateType::Measure, indices);
+                measure.apply(s);
+            }
+            else {
+                std::cerr << "Unknown gate: " << gateName << std::endl;
+            }
         }
     }
     else if (command == "show") {
@@ -42,7 +53,7 @@ void handleCommand(const std::string& command, State& s){
             std::cout << "State is valid!" << std::endl;
         }
         else {
-            std::cout << "State is invalid!" << std::endl; 
+            std::cout << "State is invalid! Sum of norms is: " << s.getSumOfSquares() << std::endl;
         }
     }
     else if (command == "exit") {
