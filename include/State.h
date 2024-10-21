@@ -22,7 +22,7 @@ public:
     State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {}
 
     /*
-    Access to the state
+    Access to the state's amplitudes.
     */
     std::complex<double>& operator[] (size_t idx);
 

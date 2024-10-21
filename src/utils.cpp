@@ -96,6 +96,39 @@ std::string trim(std::string& str){
     return str.substr(first, last - first + 1);
 }
 
-void printHelp(){
-    std::cout << "No help message yet..." << std::endl;
+void lower(std::string& src, std::string& dst){
+    std::transform(src.begin(), src.end(), dst.begin(), [](char c) {return std::tolower(c);});
 }
+
+void listCommands(){
+    std::cout << "Available commands:" << std::endl;
+    std::cout << "list              :   Lists available commands." << std::endl;
+    std::cout << "check             :   Checks if the sum of the squared amplitudes is equal to 1." << std::endl;
+    std::cout << "show              :   Lists the classical states and their corresponding amplitudes." << std::endl;
+    std::cout << "exit              :   Exits the simulator." << std::endl;
+    std::cout << "measure   <idx>   :   Measures the specified qubit, simulating state collapse." << std::endl;
+    std::cout << "paulix    <idx>   :   Applies the PauliX Gate to the given qubit." << std::endl;
+    std::cout << "pauliy    <idx>   :   Applies the PauliY Gate to the given qubit." << std::endl;
+    std::cout << "pauliz    <idx>   :   Applies the PauliZ Gate to the given qubit." << std::endl;
+    std::cout << "hadamard  <idx>   :   Applies the Hadamard Gate to the given qubit." << std::endl;
+    std::cout << "cnot <ctrl> <tgt> :   Applies the CNOT Gate to qubit tgt, with ctrl as control." << std::endl;
+}
+
+void printHelp(){
+    std::cout << helpMessage << std::endl;
+}
+
+const std::string helpMessage = R"(
+Simulator arguments:
+-s  :   Text file containing the number n of qubits for the simulation,
+        specified in the first line of the file as qubits=<n>, and the 
+        associated 2^n amplitudes for the possible states. The (complex)
+        amplitudes must be given in decimal format, e.g. '0.5', '0.3+0.05i',
+        'i', '-0.123'. If more (or less) than 2^n amplitudes are read, the
+        simulator will throw an error.
+-h  :   Prints out this help message.
+
+Usage:  ./QuantumSimulator -s <file containing starting state>
+
+To see the possible operations in the simulator, run the program and type 'list'.
+)";

@@ -7,6 +7,7 @@
 #include <sstream>
 #include <complex>
 #include <cmath>
+#include <algorithm>
 #include <iomanip>
 
 // not sure if we should go lower, using this threshold for most computations
@@ -38,5 +39,19 @@ Removes leading and trailing whitespaces.
 */
 std::string trim(std::string& str);
 
+/*
+Converts a string to lowercase, reading from src and writing in dst.
+*/
+void lower(std::string& src, std::string& dst);
+
+
+/*
+Printing utilities
+*/
+
+void listCommands();
+
 void printHelp();
 
+
+const extern std::string helpMessage;

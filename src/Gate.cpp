@@ -1,9 +1,5 @@
 #include "Gate.h"
 
-void Gate::setIndices(std::vector<size_t> qubitIndices){
-    _indices = qubitIndices;
-}
-
 bool Gate::apply(State& s){
     switch (_type){
         case GateType::PauliX:
@@ -14,6 +10,8 @@ bool Gate::apply(State& s){
             return applyPauliZ(s);
         case GateType::Hadamard:
             return applyHadamard(s);
+        case GateType::CNot:
+            return applyCNot(s);
         case GateType::Measure:
             std::cout << "Measured Qubit " << _indices[0] <<
             ": " << measure(s) << std::endl;
@@ -89,6 +87,26 @@ bool Gate::applyHadamard(State& s){
             std::complex<double> z2(s[flipped]);
             s[i] = (z1 + z2) * fac;
             s[flipped] = (z1 - z2) * fac;
+        }
+    }
+    return true;
+}
+
+bool Gate::applyCNot(State& s){
+    if (_indices.size() != 2) {
+        std::cerr << "Error: CNot Gate requires exactly two indices (control and target)." << std::endl;
+        return false;
+    }
+    size_t ctrl = _indices[0];
+    size_t target = _indices[1];
+    size_t stateSize = 1 << s.getQubitNr();
+    
+    for (size_t i = 0; i < stateSize; ++i){
+        if (i & (1 << ctrl)){
+            size_t flipped = i ^ (1 << target);
+            if (i < flipped){
+                std::swap(s[i], s[flipped]);
+            }
         }
     }
     return true;
