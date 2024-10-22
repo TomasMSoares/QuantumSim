@@ -12,6 +12,14 @@ bool Gate::apply(State& s){
             return applyHadamard(s);
         case GateType::CNot:
             return applyCNot(s);
+        case GateType::Toffoli:
+            return applyToffoli(s);
+        case GateType::S:
+            return applyS(s);
+        case GateType::T:
+            return applyT(s);
+        case GateType::Swap:
+            return applySwap(s);
         case GateType::Measure:
             std::cout << "Measured Qubit " << _indices[0] <<
             ": " << measure(s) << std::endl;
@@ -107,6 +115,84 @@ bool Gate::applyCNot(State& s){
             if (i < flipped){
                 std::swap(s[i], s[flipped]);
             }
+        }
+    }
+    return true;
+}
+
+bool Gate::applyToffoli(State& s){
+    if (_indices.size() != 3) {
+        std::cerr << "Error: Toffoli Gate requires exactly three indices (ctrl1, ctrl2 and target)." << std::endl;
+        return false;
+    }
+    size_t ctrl1 = _indices[0];
+    size_t ctrl2 = _indices[1];
+    size_t target = _indices[2];
+    size_t stateSize = 1 << s.getQubitNr();
+    
+    for (size_t i = 0; i < stateSize; ++i){
+        if ((i & (1 << ctrl1)) && i & (1 << ctrl2)){
+            size_t flipped = i ^ (1 << target);
+            if (i < flipped){
+                std::swap(s[i], s[flipped]);
+            }
+        }
+    }
+    return true;
+}
+
+bool Gate::applyS(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: S Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    size_t stateSize = 1 << s.getQubitNr();
+
+    std::complex<double> phase(0, 1);
+    for (size_t i = 0; i < stateSize; ++i) {
+        if (i & (1 << target)){
+            s[i] *= phase;
+        }
+    }
+    return true;
+}
+
+bool Gate::applyT(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: T Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    size_t stateSize = 1 << s.getQubitNr();
+
+    // M_PI is defined in the math.h header
+    // we are using Euler's formula for simplicity
+    std::complex<double> phase(std::cos(M_PI/4.0), std::sin(M_PI/4.0));
+    for (size_t i = 0; i < stateSize; ++i){
+        if (i & (1 << target)){
+            s[i] *= phase;
+        }
+    }
+    return true;
+}
+
+bool Gate::applySwap(State& s){
+    if (_indices.size() != 2){
+        std::cerr << "Invalid index: Swap Gate requires exactly two qubits." << std::endl;
+        return false;
+    }
+    size_t j = _indices[0];
+    size_t k = _indices[1];
+    if (j == k) {
+        return true;
+    }
+
+    size_t stateSize = 1 << s.getQubitNr();
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = swapBits(i, j, k, 1);
+        if (i < flipped){
+            std::swap(s[i], s[flipped]);
         }
     }
     return true;

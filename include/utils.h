@@ -19,6 +19,14 @@ Returns the binary representation of the given value with a fixed number of bits
 std::string binary(size_t value, const size_t bitNr);
 
 /*
+Taken from: https://graphics.stanford.edu/~seander/bithacks.html#SwappingBitsXOR
+Swaps specified amount of consecutive bits of the given value starting at indices j and k.
+Example: value = 100110, j = 1, k = 3, n = 2
+        result = 111000
+*/
+size_t swapBits(size_t value, size_t j, size_t k, size_t consecutiveBits);
+
+/*
 Returns a string representation of the given complex number in the form a+ib.
 */
 std::string toString(std::complex<double> z);

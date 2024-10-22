@@ -8,4 +8,4 @@ The Simulator expects the input file for the initial state in the following way:
 - The second line contains the starting amplitude for each possible state.
     - The amplitudes are complex numbers given in decimal format (no support for fractions yet), e.g "2i", "0.443", "-0.4+1.5i".
     - The amplitudes are separated by spaces.
-    - If the number of read amplitudes isn't equal to 2^{number of qubits}, the inout will fail.
+    - If the number of read amplitudes isn't equal to 2^{number of qubits}, the input will fail.

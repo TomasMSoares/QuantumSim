@@ -12,6 +12,10 @@ enum class GateType {
     PauliZ,
     Hadamard,
     CNot,
+    Toffoli,
+    S,
+    T,
+    Swap,
     Measure,
     Custom
 };
@@ -46,6 +50,10 @@ private:
     bool applyPauliZ(State& s);
     bool applyHadamard(State& s);
     bool applyCNot(State& s);
+    bool applyToffoli(State& s);
+    bool applyS(State& s);
+    bool applyT(State& s);
+    bool applySwap(State& s);
     bool applyCustomGate(State& s);
     int measure(State& s);
 };

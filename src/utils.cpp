@@ -12,6 +12,14 @@ std::string binary(size_t value, const size_t bitNr){
     return res;
 }
 
+size_t swapBits(size_t value, size_t j, size_t k, size_t consecutiveBits){
+    if (j == k){
+        return value;
+    }
+    size_t x = ((value >> j) ^ (value >> k)) & ((1U << consecutiveBits) - 1); // XOR temporary
+    return value ^ ((x << j) | (x << k));
+}
+
 std::string toString(std::complex<double> z){
     std::ostringstream res;
     res << std::fixed << std::setprecision(6);
@@ -112,6 +120,10 @@ void listCommands(){
     std::cout << "pauliz    <idx>   :   Applies the PauliZ Gate to the given qubit." << std::endl;
     std::cout << "hadamard  <idx>   :   Applies the Hadamard Gate to the given qubit." << std::endl;
     std::cout << "cnot <ctrl> <tgt> :   Applies the CNOT Gate to qubit tgt, with ctrl as control." << std::endl;
+    std::cout << "toffoli <c1> <c2> <tgt> : Applies the Toffoli Gate to qubit tgt, with c1 and c2 as controls." << std::endl;
+    std::cout << "s         <idx>   :   Applies the S Gate to the given qubit." << std::endl;
+    std::cout << "t         <idx>   :   Applies the T Gate to the given qubit." << std::endl;
+    std::cout << "swap <idx1> <idx2>:   Applies the Swap Gate to the specified qubits." << std::endl;
 }
 
 void printHelp(){

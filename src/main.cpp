@@ -69,6 +69,22 @@ void handleCommand(const std::string& command, State& s){
             Gate cnot(GateType::CNot, indices);
             cnot.apply(s);
         }
+        else if (gateName == "toffoli") {
+            Gate toffoli(GateType::Toffoli, indices);
+            toffoli.apply(s);
+        }
+        else if (gateName == "s"){
+            Gate sg(GateType::S, indices);
+            sg.apply(s);
+        }
+        else if (gateName == "t"){
+            Gate t(GateType::T, indices);
+            t.apply(s);
+        }
+        else if (gateName == "swap"){
+            Gate swap(GateType::Swap, indices);
+            swap.apply(s);
+        }
         else if (gateName == "measure") {
             Gate measure(GateType::Measure, indices);
             measure.apply(s);
