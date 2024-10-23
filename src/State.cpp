@@ -86,7 +86,7 @@ bool State::parseVector(const std::string& filename) {
 
     _state.resize(1 << _qubitNr);
 
-    // Parse each amplitude separated by spaces
+    // Parse each amplitude separated by commas
     while (amplitudestream >> ampStr) {
         if (idx >= _state.size()) {
             std::cerr << "Too many amplitudes provided." << std::endl;

@@ -1,5 +1,9 @@
 #include "Gate.h"
 
+void Gate::setIndices(std::vector<size_t>& indices){
+    _indices = indices;
+}
+
 bool Gate::apply(State& s){
     switch (_type){
         case GateType::PauliX:
@@ -20,6 +24,8 @@ bool Gate::apply(State& s){
             return applyT(s);
         case GateType::Swap:
             return applySwap(s);
+        case GateType::Custom:
+            return applyCustom(s);
         case GateType::Measure:
             std::cout << "Measured Qubit " << _indices[0] <<
             ": " << measure(s) << std::endl;
@@ -198,8 +204,9 @@ bool Gate::applySwap(State& s){
     return true;
 }
 
-bool Gate::applyCustomGate(State& s){
-    //TODO
+bool Gate::applyCustom(State& s){
+    std::cout << "Applying custom gate..." << std::endl;
+    std::cout << "WIP" << std::endl;
     return true;
 }
 
@@ -254,4 +261,76 @@ int Gate::measure(State& s){
     }
 
     return outcome;
+}
+
+bool Gate::loadGate(std::string& filename){
+    std::ifstream matrixFile(filename);
+    if (!matrixFile){
+        std::cerr << "Error: Couldn't open file to load matrix: " << filename << std::endl;
+        return false;
+    }
+
+    std::string line;
+    if (!std::getline(matrixFile, line)) {
+        std::cerr << "Error: Matrix dimensions can't be empty!" << std::endl;
+        return false;
+    }
+
+    line = trim(line);
+    std::string dimStr;
+    std::string label;
+    char equals;
+
+    // Parse the "dim = n" line
+    auto equalPos = line.find('=');
+    if (equalPos == std::string::npos) {
+        std::cerr << "Error: Couldn't parse dimensions." << std::endl;
+        return false;
+    }
+    label = line.substr(0, equalPos);
+    label = trim(label);
+    dimStr = line.substr(equalPos + 1, line.size() - equalPos);
+    dimStr = trim(dimStr);
+    
+    if (label != "dim") {
+        std::cerr << "Error: Couldn't parse dimensions." << std::endl;
+        return false;
+    }
+
+    size_t dim = std::stoul(dimStr);
+    if (dim < 2) {
+        std::cerr << "Error: Matrix dimensions must be greater than 1." << std::endl;
+        return false;
+    }
+
+    // Initialize the matrix for row insertion
+    std::vector<std::vector<std::complex<double>>> matrix(dim);
+
+    size_t rowIdx = 0;
+    while(std::getline(matrixFile, line)){
+        if (rowIdx >= dim){
+            std::cerr << "Error : Too many rows provided for matrix dimensions: " << dim << "x" << dim << std::endl;
+            return false;
+        }
+        std::vector<std::complex<double>> row(dim);
+        std::string valueStr;
+        std::istringstream rowStream(line);
+        size_t colIdx = 0;
+        while (rowStream >> valueStr){
+            if (colIdx >= dim){
+                std::cerr << "Error: Too many values provided for row " << rowIdx << std::endl;
+                return false;
+            }
+            std::complex<double> value = readComplex(valueStr);
+            row[colIdx] = value;
+            ++colIdx;
+        }
+        matrix[rowIdx] = row;
+        ++rowIdx;
+    }
+    
+    // We only remove the old matrix here to not delete it in case of an error
+    _matrix.clear();
+    _matrix = matrix;
+    return true;
 }
