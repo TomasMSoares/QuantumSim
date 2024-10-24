@@ -38,10 +38,10 @@ int main(int argc, char** argv){
     }
 
     std::cout << "\033[33mWelcome to my Quantum Circuit Simulator!\033[0m" << std::endl;
-    std::cout << "Use 'list' to see all available commands." << std::endl;
+    std::cout << "Use '\033[96mlist\033[0m' to see all available commands." << std::endl;
 
     std::string command;
-    while (true) {
+    while (!sim.exitCmd) {
         std::cout << "> ";
         std::getline(std::cin, command);
         lower(command, command);

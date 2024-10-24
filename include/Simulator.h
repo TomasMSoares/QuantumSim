@@ -28,6 +28,8 @@ Printing utilities
 
     void printHelp();
 
+    bool exitCmd = false;
+
 private:
     State s;
     std::unordered_map<std::string, Gate> customGates;

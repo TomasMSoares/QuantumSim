@@ -25,7 +25,7 @@ void State::printState() const{
     std::cout << "\033[33mState:\033[0m" << std::endl;
     for (size_t i = 0; i < possibleStates; ++i){
         std::string entry = toString(_state[i]) + "*";
-        entry += "\033[36m|" + binary(i, _qubitNr) + ">\033[0m";
+        entry += "\033[96m|" + binary(i, _qubitNr) + ">\033[0m";
         if (i < possibleStates - 1){
              entry += " + ";
         }

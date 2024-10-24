@@ -96,8 +96,8 @@ std::string removeTrailingZeros(std::string& value){
 }
 
 std::string trim(std::string& str){
-    auto first = str.find_first_not_of(" \t\n\r\f\v");
-    auto last = str.find_last_not_of(" \t\n\r\f\v");
+    auto first = str.find_first_not_of(" \t\n\r\f\v\"");
+    auto last = str.find_last_not_of(" \t\n\r\f\v\"");
     if (first == std::string::npos){
         return "";
     }
