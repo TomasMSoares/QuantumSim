@@ -277,9 +277,9 @@ bool Gate::loadGate(std::string& filename){
     }
 
     line = trim(line);
-    std::string dimStr;
     std::string label;
     char equals;
+    std::string dimStr;
 
     // Parse the "dim = n" line
     auto equalPos = line.find('=');
@@ -300,6 +300,12 @@ bool Gate::loadGate(std::string& filename){
     size_t dim = std::stoul(dimStr);
     if (dim < 2) {
         std::cerr << "Error: Matrix dimensions must be greater than 1." << std::endl;
+        return false;
+    }
+
+    // taken from https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
+    if ((dim & (dim - 1)) != 0) {
+        std::cerr << "Error: Matrix dimensions must be a power of 2." << std::endl;
         return false;
     }
 
@@ -329,8 +335,7 @@ bool Gate::loadGate(std::string& filename){
         ++rowIdx;
     }
     
-    // We only remove the old matrix here to not delete it in case of an error
-    _matrix.clear();
+    // We only replace the old matrix here to not delete it in case of an error
     _matrix = matrix;
     return true;
 }
