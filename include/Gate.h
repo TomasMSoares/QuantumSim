@@ -70,5 +70,5 @@ private:
     bool applySwap(State& s);
     bool applyFredkin(State& s);
     bool applyCustom(State& s);
-    int measure(State& s);
+    size_t measure(State& s);
 };

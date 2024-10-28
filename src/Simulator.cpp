@@ -80,14 +80,17 @@ void Simulator::handleGateCommand(std::string& gateName, std::istringstream& iss
     }
 
     // first of all we check the validity of the indices
-    if(indices.empty()){
+    if(indices.empty() && gateName != "measure"){
         std::cerr << "\033[31mError: \033[0mNo indices provided for gate." << std::endl;
         return;
     }
-    for (const auto& idx : indices){
-        if (idx >= s.getQubitNr()){
-            std::cerr << "\033[31mError: \033[0mIndex " << idx << " out of range." << std::endl;
-            return;
+
+    if (!indices.empty()) {
+        for (const auto& idx : indices){
+            if (idx >= s.getQubitNr()){
+                std::cerr << "\033[31mError: \033[0mIndex " << idx << " out of range." << std::endl;
+                return;
+            }
         }
     }
 
@@ -164,6 +167,10 @@ void Simulator::handleGateCommand(std::string& gateName, std::istringstream& iss
 }
 
 void Simulator::printCustomGates(){
+    if (customGates.empty()){
+        std::cout << "\033[33mNo Custom Gates loaded!\033[0m" << std::endl;
+        return;
+    }
     std::cout << "\033[33mCustom Gates:\033[0m" << std::endl;
     for (const auto& gate : customGates){
         std::cout << "\033[95m" << gate.first << "\033[0m" << std::endl;
