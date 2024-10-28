@@ -63,11 +63,11 @@ void Simulator::handleLoad(std::istringstream& iss){
             std::cout << "\033[33mLoaded custom Gate:\033[95m " << gateName << "\033[33m from\033[0m " << filename << std::endl;
         }
         else {
-            std::cerr << "Error: Custom Gate load from " << filename << " failed." << std::endl; 
+            std::cerr << "\033[31mError: \033[0mCustom Gate load from " << filename << " failed." << std::endl; 
         }
     }
     else {
-        std::cerr << "Error: Invalid arguments to load gate. Use load \"gatename\" \"filename\"." << std::endl;
+        std::cerr << "\033[31mError: \033[0mInvalid arguments to load gate. Use load \"gatename\" \"filename\"." << std::endl;
     }
 }
 
@@ -81,72 +81,85 @@ void Simulator::handleGateCommand(std::string& gateName, std::istringstream& iss
 
     // first of all we check the validity of the indices
     if(indices.empty()){
-        std::cerr << "Error: No indices provided for gate." << std::endl;
+        std::cerr << "\033[31mError: \033[0mNo indices provided for gate." << std::endl;
         return;
     }
     for (const auto& idx : indices){
         if (idx >= s.getQubitNr()){
-            std::cerr << "Error: Index " << idx << " out of range." << std::endl;
+            std::cerr << "\033[31mError: \033[0mIndex " << idx << " out of range." << std::endl;
             return;
         }
     }
 
+    bool app = false;
+
     if (gateName == "paulix") {
         Gate pauliX(GateType::PauliX);
         pauliX.setIndices(indices);
-        pauliX.apply(s);
+        app = pauliX.apply(s);
     }
     else if (gateName == "pauliy") {
         Gate pauliY(GateType::PauliY);
         pauliY.setIndices(indices);
-        pauliY.apply(s);
+        app = pauliY.apply(s);
     }
     else if (gateName == "pauliz"){
         Gate pauliZ(GateType::PauliZ);
         pauliZ.setIndices(indices);
-        pauliZ.apply(s);
+        app = pauliZ.apply(s);
     }
     else if (gateName == "hadamard") {
         Gate hadamard(GateType::Hadamard);
         hadamard.setIndices(indices);
-        hadamard.apply(s);
+        app = hadamard.apply(s);
     }
     else if (gateName == "cnot") {
         Gate cnot(GateType::CNot);
         cnot.setIndices(indices);
-        cnot.apply(s);
+        app = cnot.apply(s);
     }
-    else if (gateName == "toffoli") {
+    else if (gateName == "toffoli" || gateName == "ccnot") {
         Gate toffoli(GateType::Toffoli);
         toffoli.setIndices(indices);
-        toffoli.apply(s);
+        app = toffoli.apply(s);
     }
     else if (gateName == "s"){
         Gate sg(GateType::S);
         sg.setIndices(indices);
-        sg.apply(s);
+        app = sg.apply(s);
     }
     else if (gateName == "t"){
         Gate t(GateType::T);
         t.setIndices(indices);
-        t.apply(s);
+        app = t.apply(s);
     }
     else if (gateName == "swap"){
         Gate swap(GateType::Swap);
         swap.setIndices(indices);
-        swap.apply(s);
+        app = swap.apply(s);
+    }
+    else if (gateName == "fredkin" || gateName == "cswap"){
+        Gate fredkin(GateType::Fredkin);
+        fredkin.setIndices(indices);
+        app = fredkin.apply(s);
     }
     else if (gateName == "measure") {
         Gate measure(GateType::Measure);
         measure.setIndices(indices);
-        measure.apply(s);
+        app = measure.apply(s);
     }
     else if (customGates.find(gateName) != customGates.end()){
         customGates.at(gateName).setIndices(indices);
-        customGates.at(gateName).apply(s); // we can't use the [] operator because Gate does not have a default constructor
+        app = customGates.at(gateName).apply(s); // we can't use the [] operator because Gate does not have a default constructor
     }
     else {
         std::cerr << "Unknown gate: " << gateName << std::endl;
+    }
+    if (app) {
+        std::cout << "Successfully applied gate!" << std::endl;
+    }
+    else {
+        std::cout << "\033[31mError: \033[0mGate application failed." << std::endl;
     }
 }
 
@@ -159,21 +172,22 @@ void Simulator::printCustomGates(){
 
 void Simulator::listCommands(){
     std::cout << "\033[33mAvailable commands:\033[0m" << std::endl;
-    std::cout << "\033[96mlist\033[0m                       :   Lists available commands." << std::endl;
-    std::cout << "\033[96mcheck\033[0m                      :   Checks if the sum of the squared amplitudes is equal to 1." << std::endl;
-    std::cout << "\033[96mshow      \033[36mstate/gates\033[0m      :   Lists classical states with corresponding amplitudes or loaded custom gates." << std::endl;
-    std::cout << "\033[96mexit\033[0m                       :   Exits the simulator." << std::endl;
-    std::cout << "\033[96mmeasure   \033[36m<idx>\033[0m            :   Measures the specified qubit, simulating state collapse." << std::endl;
-    std::cout << "\033[96mpaulix    \033[36m<idx>\033[0m            :   Applies the PauliX Gate to the given qubit." << std::endl;
-    std::cout << "\033[96mpauliy    \033[36m<idx>\033[0m            :   Applies the PauliY Gate to the given qubit." << std::endl;
-    std::cout << "\033[96mpauliz    \033[36m<idx>\033[0m            :   Applies the PauliZ Gate to the given qubit." << std::endl;
-    std::cout << "\033[96mhadamard  \033[36m<idx>\033[0m            :   Applies the Hadamard Gate to the given qubit." << std::endl;
-    std::cout << "\033[96ms         \033[36m<idx>\033[0m            :   Applies the S Gate to the given qubit." << std::endl;
-    std::cout << "\033[96mt         \033[36m<idx>\033[0m            :   Applies the T Gate to the given qubit." << std::endl;
-    std::cout << "\033[96mswap      \033[36m<idx1> <idx2>\033[0m    :   Applies the Swap Gate to the specified qubits." << std::endl;
-    std::cout << "\033[96mcnot      \033[36m<ctrl> <tgt>\033[0m     :   Applies the CNOT Gate to qubit tgt, with ctrl as control." << std::endl;
-    std::cout << "\033[96mtoffoli   \033[36m<c1> <c2> <tgt>\033[0m  :   Applies the Toffoli Gate to qubit tgt, with c1 and c2 as controls." << std::endl;
-    std::cout << "\033[96m<custom>  \033[36m<idx>\033[0m            :   Applies the given custom gate to the specified qubits" << std::endl;
+    std::cout << "\033[96mlist\033[0m                     :   Lists available commands." << std::endl;
+    std::cout << "\033[96mexit\033[0m                     :   Exits the simulator." << std::endl;
+    std::cout << "\033[96mcheck\033[0m                    :   Checks if the sum of the squared amplitudes is equal to 1." << std::endl;
+    std::cout << "\033[96mshow      \033[36mstate/gates\033[0m    :   Lists classical states with corresponding amplitudes or loaded custom gates." << std::endl;
+    std::cout << "\033[96mmeasure   \033[36m<x>\033[0m            :   Measures the specified qubit, simulating state collapse." << std::endl;
+    std::cout << "\033[96mpaulix    \033[36m<x>\033[0m            :   Applies the PauliX Gate to the given qubit." << std::endl;
+    std::cout << "\033[96mpauliy    \033[36m<x>\033[0m            :   Applies the PauliY Gate to the given qubit." << std::endl;
+    std::cout << "\033[96mpauliz    \033[36m<x>\033[0m            :   Applies the PauliZ Gate to the given qubit." << std::endl;
+    std::cout << "\033[96mhadamard  \033[36m<x>\033[0m            :   Applies the Hadamard Gate to the given qubit." << std::endl;
+    std::cout << "\033[96ms         \033[36m<x>\033[0m            :   Applies the S Gate to the given qubit." << std::endl;
+    std::cout << "\033[96mt         \033[36m<x>\033[0m            :   Applies the T Gate to the given qubit." << std::endl;
+    std::cout << "\033[96mswap      \033[36m<a> <b>\033[0m        :   Applies the Swap Gate to the specified qubits." << std::endl;
+    std::cout << "\033[96mcnot      \033[36m<c> <x>\033[0m        :   Applies the CNOT Gate to qubit x, with c as control." << std::endl;
+    std::cout << "\033[96mtoffoli   \033[36m<c1> <c2> <x>\033[0m  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls." << std::endl;
+    std::cout << "\033[96mfredkin   \033[36m<c> <a> <b>\033[0m    :   Applies the Fredkin Gate, i.e. swaps a and b if c is set." << std::endl;
+    std::cout << "\033[96m<custom>  \033[36m<x>\033[0m            :   Applies the given custom gate to the specified qubit(s)." << std::endl;
 }
 
 void Simulator::printHelp(){

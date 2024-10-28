@@ -26,13 +26,13 @@ int main(int argc, char** argv){
     }
 
     if (vec_file.empty()){
-        std::cerr << "Error: Initial state file is required!" << std::endl;
+        std::cerr << "\033[31mError: \033[0mInitial state file is required!" << std::endl;
         sim.printHelp();
         return 1;
     }
 
     if (!sim.loadState(vec_file)){
-        std::cerr << "Error: Couldn't parse vector from file: " << vec_file << std::endl;
+        std::cerr << "\033[31mError: \033[0mCouldn't parse vector from file: " << vec_file << std::endl;
         sim.printHelp();
         return 1;
     }

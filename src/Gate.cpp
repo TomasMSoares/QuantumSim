@@ -24,6 +24,8 @@ bool Gate::apply(State& s){
             return applyT(s);
         case GateType::Swap:
             return applySwap(s);
+        case GateType::Fredkin:
+            return applyFredkin(s);
         case GateType::Custom:
             return applyCustom(s);
         case GateType::Measure:
@@ -108,7 +110,7 @@ bool Gate::applyHadamard(State& s){
 
 bool Gate::applyCNot(State& s){
     if (_indices.size() != 2) {
-        std::cerr << "Error: CNot Gate requires exactly two indices (control and target)." << std::endl;
+        std::cerr << "\033[31mError: \033[0mCNot Gate requires exactly two indices (control and target)." << std::endl;
         return false;
     }
     size_t ctrl = _indices[0];
@@ -128,7 +130,7 @@ bool Gate::applyCNot(State& s){
 
 bool Gate::applyToffoli(State& s){
     if (_indices.size() != 3) {
-        std::cerr << "Error: Toffoli Gate requires exactly three indices (ctrl1, ctrl2 and target)." << std::endl;
+        std::cerr << "\033[31mError: \033[0mToffoli Gate requires exactly three indices (ctrl1, ctrl2 and target)." << std::endl;
         return false;
     }
     size_t ctrl1 = _indices[0];
@@ -204,9 +206,52 @@ bool Gate::applySwap(State& s){
     return true;
 }
 
+bool Gate::applyFredkin(State& s){
+    if (_indices.size() != 3){
+        std::cerr << "Invalid index: Fredkin Gate requires exactly three qubits." << std::endl;
+        return false;
+    }
+    size_t ctrl = _indices[0];
+    size_t j = _indices[1];
+    size_t k = _indices[2];
+    if (j == k) {
+        return true;
+    }
+    size_t stateSize = 1 << s.getQubitNr();
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = swapBits(i, j, k, 1);
+        if ((i < flipped) && (i & (1 << ctrl))){
+            std::swap(s[i], s[flipped]);
+        }
+    }
+    return true;
+}
+
 bool Gate::applyCustom(State& s){
-    std::cout << "Applying custom gate..." << std::endl;
-    std::cout << "WIP" << std::endl;
+    if (_indices.size() != 1){
+        std::cerr << "Sorry, only one-qubit custom gates are supported atm." << std::endl;
+        return false; 
+    }
+    
+    size_t target = _indices[0];
+    size_t stateSize = 1 << s.getQubitNr();
+    std::vector<std::complex<double>> newState(stateSize, 0);
+    
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = i ^ (1 << target);
+        // check if target bit is set
+        if (i & (1 << target)){
+            newState[i] = s[flipped] * _matrix[1][0] + s[i] * _matrix[1][1];
+        }
+        else {
+            newState[i] = s[flipped] * _matrix[0][1] + s[i] * _matrix[0][0];
+        }
+    }
+
+    for (size_t i = 0; i < stateSize; ++i){
+        s[i] = newState[i];
+    }
+
     return true;
 }
 
@@ -266,13 +311,13 @@ int Gate::measure(State& s){
 bool Gate::loadGate(std::string& filename){
     std::ifstream matrixFile(filename);
     if (!matrixFile){
-        std::cerr << "Error: Couldn't open file to load matrix: " << filename << std::endl;
+        std::cerr << "Couldn't open file to load matrix: " << filename << std::endl;
         return false;
     }
 
     std::string line;
     if (!std::getline(matrixFile, line)) {
-        std::cerr << "Error: Matrix dimensions can't be empty!" << std::endl;
+        std::cerr << "Matrix dimensions can't be empty!" << std::endl;
         return false;
     }
 
@@ -284,7 +329,7 @@ bool Gate::loadGate(std::string& filename){
     // Parse the "dim = n" line
     auto equalPos = line.find('=');
     if (equalPos == std::string::npos) {
-        std::cerr << "Error: Couldn't parse dimensions." << std::endl;
+        std::cerr << "Couldn't parse dimensions." << std::endl;
         return false;
     }
     label = line.substr(0, equalPos);
@@ -293,19 +338,19 @@ bool Gate::loadGate(std::string& filename){
     dimStr = trim(dimStr);
     
     if (label != "dim") {
-        std::cerr << "Error: Couldn't parse dimensions." << std::endl;
+        std::cerr << "Couldn't parse dimensions." << std::endl;
         return false;
     }
 
     size_t dim = std::stoul(dimStr);
     if (dim < 2) {
-        std::cerr << "Error: Matrix dimensions must be greater than 1." << std::endl;
+        std::cerr << "Matrix dimensions must be greater than 1." << std::endl;
         return false;
     }
 
     // taken from https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
     if ((dim & (dim - 1)) != 0) {
-        std::cerr << "Error: Matrix dimensions must be a power of 2." << std::endl;
+        std::cerr << "Matrix dimensions must be a power of 2." << std::endl;
         return false;
     }
 
@@ -315,7 +360,7 @@ bool Gate::loadGate(std::string& filename){
     size_t rowIdx = 0;
     while(std::getline(matrixFile, line)){
         if (rowIdx >= dim){
-            std::cerr << "Error : Too many rows provided for matrix dimensions: " << dim << "x" << dim << std::endl;
+            std::cerr << "Too many rows provided for matrix dimensions: " << dim << "x" << dim << std::endl;
             return false;
         }
         std::vector<std::complex<double>> row(dim);
@@ -324,7 +369,7 @@ bool Gate::loadGate(std::string& filename){
         size_t colIdx = 0;
         while (rowStream >> valueStr){
             if (colIdx >= dim){
-                std::cerr << "Error: Too many values provided for row " << rowIdx << std::endl;
+                std::cerr << "Too many values provided for row " << rowIdx << std::endl;
                 return false;
             }
             std::complex<double> value = readComplex(valueStr);

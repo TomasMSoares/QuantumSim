@@ -16,6 +16,7 @@ enum class GateType {
     S,
     T,
     Swap,
+    Fredkin,
     Measure,
     Custom
 };
@@ -67,6 +68,7 @@ private:
     bool applyS(State& s);
     bool applyT(State& s);
     bool applySwap(State& s);
+    bool applyFredkin(State& s);
     bool applyCustom(State& s);
     int measure(State& s);
 };
