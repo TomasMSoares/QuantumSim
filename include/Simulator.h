@@ -9,7 +9,9 @@
 class Simulator{
 public:
     Simulator() : s() {}
-    
+
+    Simulator(size_t qubitNr) : s(qubitNr) {}
+
     bool loadState(std::string& filename);
 
     void parseCommand(const std::string& command);
@@ -26,13 +28,13 @@ Printing utilities
 
     void listCommands();
 
-    void printHelp();
-
     bool exitCmd = false;
 
 private:
     State s;
     std::unordered_map<std::string, Gate> customGates;
 };
+
+void printHelp();
 
 const extern std::string helpMessage;

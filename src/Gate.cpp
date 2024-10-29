@@ -401,8 +401,48 @@ bool Gate::loadGate(std::string& filename){
         matrix[rowIdx] = row;
         ++rowIdx;
     }
-    
+
+    if (!isUnitary(matrix)){
+        std::cerr << "Provided matrix is not unitary!" << std::endl;
+        return false;
+    }
+
     // We only replace the old matrix here to not delete it in case of an error
     _matrix = matrix;
+    return true;
+}
+
+bool Gate::isUnitary(std::vector<std::vector<std::complex<double>>> matrix) {
+
+    if (matrix.empty()){
+        std::cerr << "Matrix for unitary check can't be empty!" << std::endl;
+        return false;
+    }
+    
+    // we iterate over the matrix row-wise in the outer and inner loop and multiply
+    // the values against the complex conjugate
+    size_t n = matrix.size();
+    for (size_t i = 0; i < n; ++i){
+        for (size_t j = 0; j < n; ++j) {
+            std::complex<double> dotP = 0;
+            for (size_t k = 0; k < n; ++k){
+                dotP += matrix[i][k] * std::conj(matrix[j][k]);
+            }
+            // for the entries in the diagonal the value must be 1 (within tolerance EPS)
+            if (i == j){
+                if (std::abs(dotP - std::complex<double>(1, 0)) > EPS){
+                    std::cout << "not equal to 1: " << toString(dotP) << std::endl;
+                    return false;
+                }
+            }
+            // for the non-diagonal entries the value must be 0 (within tolerance EPS)
+            else {
+                if (std::abs(dotP) > EPS) {
+                    std::cout << "not equal to 0: " << toString(dotP) << std::endl;
+                    return false;
+                }
+            }  
+        }
+    }
     return true;
 }

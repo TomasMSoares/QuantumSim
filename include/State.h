@@ -14,12 +14,16 @@ public:
     /*
     Initializes quantum state vector with one qubit.
     */
-    State() : _state(2, 0.0), _qubitNr(1) {}
+    State() : _state(2, 0.0), _qubitNr(1) {
+        _state[0] = 1.0;
+    }
 
     /*
     Initializes quantum state vector with the specified amount of qubits.
     */
-    State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {}
+    State(size_t qubits) : _state(1 << qubits, 0.0), _qubitNr(qubits) {
+        _state[0] = 1.0;
+    }
 
     /*
     Access to the state's amplitudes.

@@ -70,5 +70,8 @@ private:
     bool applySwap(State& s);
     bool applyFredkin(State& s);
     bool applyCustom(State& s);
+
     size_t measure(State& s);
+
+    bool isUnitary(std::vector<std::vector<std::complex<double>>> matrix);
 };

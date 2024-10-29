@@ -197,21 +197,25 @@ void Simulator::listCommands(){
     std::cout << "\033[96m<custom>  \033[36m<x>\033[0m            :   Applies the given custom gate to the specified qubit(s)." << std::endl;
 }
 
-void Simulator::printHelp(){
+void printHelp(){
     std::cout << helpMessage << std::endl;
 }
 
 const std::string helpMessage = R"(
 Simulator arguments:
--s  :   Text file containing the number n of qubits for the simulation,
+-s  :   Vector input file containing the number n of qubits for the simulation,
         specified in the first line of the file as qubits=<n>, and the 
         associated 2^n amplitudes for the possible states. The (complex)
         amplitudes must be given in decimal format, e.g. '0.5', '0.3+0.05i',
         'i', '-0.123'. If more (or less) than 2^n amplitudes are read, the
         simulator will throw an error.
+-q  :   Number of qubits for the simulator, assuming the starting state is
+        the zero state. Will be ignored if a vector input file is specified.
 -h  :   Prints out this help message.
 
 Usage:  ./QuantumSimulator -s <file containing starting state>
 
+If no input file or qubit number are specified, the simulation will start with
+only one qubit in the zero state.
 To see the possible operations in the simulator, run the program and type 'list'.
 )";
