@@ -55,6 +55,11 @@ public:
     */
     void printState() const;
 
+    /*
+    Shows the associated probability of each classical state.
+    */
+    void printDistribution() const;
+    
 
 private:
     std::vector<std::complex<double>> _state;

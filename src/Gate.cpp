@@ -4,6 +4,10 @@ void Gate::setIndices(std::vector<size_t>& indices){
     _indices = indices;
 }
 
+void Gate::setAngle(double angle){
+    _angle = angle;
+}
+
 bool Gate::apply(State& s){
     switch (_type){
         case GateType::PauliX:
@@ -26,6 +30,12 @@ bool Gate::apply(State& s){
             return applySwap(s);
         case GateType::Fredkin:
             return applyFredkin(s);
+        case GateType::Rx:
+            return applyRx(s);
+        case GateType::Ry:
+            return applyRy(s);
+        case GateType::Rz:
+            return applyRz(s);
         case GateType::Custom:
             return applyCustom(s);
         case GateType::Measure:
@@ -233,6 +243,73 @@ bool Gate::applyFredkin(State& s){
     return true;
 }
 
+bool Gate::applyRx(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: Rx Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    double cosAng = std::cos(_angle/2);
+    double sinAng = std::sin(_angle/2);
+
+    std::complex<double> imag(0,1);
+    size_t stateSize = 1 << s.getQubitNr();
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = i ^ (1 << target);
+        if (i < flipped){
+            auto orig =  s[i];
+            auto origFlipped = s[flipped];
+            s[i] = cosAng * orig - imag * sinAng * origFlipped;
+            s[flipped] = -imag * sinAng * orig + cosAng * origFlipped;
+        }
+    }
+
+    return true;
+}
+
+bool Gate::applyRy(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: Ry Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    double cosAng = std::cos(_angle/2);
+    double sinAng = std::sin(_angle/2);
+
+    size_t stateSize = 1 << s.getQubitNr();
+    for (size_t i = 0; i < stateSize; ++i){
+        size_t flipped = i ^ (1 << target);
+        if (i < flipped) {
+            auto orig = s[i];
+            auto origFlipped = s[flipped];
+            s[i] = cosAng * orig - sinAng * origFlipped;
+            s[flipped] = sinAng * orig + cosAng * origFlipped;
+        }
+    }
+    return true;
+}
+
+bool Gate::applyRz(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: Rz Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    std::complex<double> phasePos(std::cos(_angle/2), std::sin(_angle/2));
+    std::complex<double> phaseNeg(std::cos(_angle/2), -std::sin(_angle/2));
+
+    size_t stateSize = 1 << s.getQubitNr();
+    for (size_t i = 0; i < stateSize; ++i){
+        if (i & (1 << target)) {
+            s[i] *= phaseNeg;
+        }
+        else {
+            s[i] *= phasePos;
+        }
+    }
+    return true;
+}
+
 bool Gate::applyCustom(State& s){
     if (_indices.size() != 1){
         std::cerr << "Sorry, only one-qubit custom gates are supported atm." << std::endl;
@@ -264,7 +341,7 @@ bool Gate::applyCustom(State& s){
 size_t Gate::measure(State& s){
     if (!(_indices.size() == 1 || _indices.empty())){
         std::cerr << "Invalid index: Measurement can only be performed on one qubit or the whole system." << std::endl;
-        return -1;
+        return 0;
     }
 
     // generate random value between 0 and 1:

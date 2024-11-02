@@ -107,3 +107,9 @@ std::string trim(std::string& str){
 void lower(std::string& src, std::string& dst){
     std::transform(src.begin(), src.end(), dst.begin(), [](char c) {return std::tolower(c);});
 }
+
+// taken from https://stackoverflow.com/questions/4654636/how-to-determine-if-a-string-is-a-number-with-c
+bool isInteger(const std::string& s) {
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+}

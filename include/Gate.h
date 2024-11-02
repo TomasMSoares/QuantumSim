@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <unordered_map>
 #include "State.h"
 
 enum class GateType {
@@ -18,6 +19,9 @@ enum class GateType {
     Swap,
     Fredkin,
     Measure,
+    Rx,
+    Ry,
+    Rz,
     Custom
 };
 
@@ -46,6 +50,8 @@ public:
 
     void setIndices(std::vector<size_t>& indices);
 
+    void setAngle(double angle);
+
 private:
     GateType _type;
 
@@ -53,6 +59,11 @@ private:
     Vector containing state indices that gate should be applied to.
     */
     std::vector<size_t> _indices;
+
+    /*
+    This attribute should only be initialized in the case of rotation gates.
+    */
+    double _angle = 0.0;
 
     /*
     This attribute should only be initialized in the case of a custom matrix.
@@ -69,9 +80,28 @@ private:
     bool applyT(State& s);
     bool applySwap(State& s);
     bool applyFredkin(State& s);
+    bool applyRx(State& s);
+    bool applyRy(State& s);
+    bool applyRz(State& s);
     bool applyCustom(State& s);
 
     size_t measure(State& s);
 
     bool isUnitary(std::vector<std::vector<std::complex<double>>> matrix);
+};
+
+static const std::unordered_map<std::string, GateType> gateTypeMap = {
+    {"paulix", GateType::PauliX},
+    {"pauliy", GateType::PauliY},
+    {"pauliz", GateType::PauliZ},
+    {"hadamard", GateType::Hadamard},
+    {"s", GateType::S},
+    {"t", GateType::T},
+    {"cnot", GateType::CNot},
+    {"toffoli", GateType::Toffoli},
+    {"ccnot", GateType::Toffoli},
+    {"swap", GateType::Swap},
+    {"fredkin", GateType::Fredkin},
+    {"cswap", GateType::Fredkin},
+    {"measure", GateType::Measure}
 };

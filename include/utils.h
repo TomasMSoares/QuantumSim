@@ -51,3 +51,8 @@ std::string trim(std::string& str);
 Converts a string to lowercase, reading from src and writing in dst.
 */
 void lower(std::string& src, std::string& dst);
+
+/*
+Checks if all of the characters in the string are digits.
+*/
+bool isInteger(const std::string& s);

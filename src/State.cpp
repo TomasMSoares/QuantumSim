@@ -105,3 +105,24 @@ bool State::parseVector(const std::string& filename) {
 
     return true;
 }
+
+void State::printDistribution() const{
+    const size_t possibleStates = 1 << _qubitNr;
+    std::cout << "\033[33mDistribution:\033[0m" << std::endl;
+    bool printed = false; // just to separate the probabilities by commas
+
+    for (size_t i = 0; i < possibleStates; ++i){
+        std::string entry = "\033[96m|" + binary(i, _qubitNr) + ">\033[0m" + ":";
+        double prob = std::norm(_state[i]);
+        if (std::abs(prob) < EPS){
+             continue;
+        }
+        if (printed) {
+            std::cout << ", ";
+        }
+        printed = true;
+        entry += std::to_string(prob);
+        std::cout << entry;
+    }
+    std::cout << std::endl;
+}

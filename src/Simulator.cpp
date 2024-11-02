@@ -33,6 +33,7 @@ void Simulator::parseCommand(const std::string& command){
     else if (commandStart == "check") {
         if (s.isValid()){
             std::cout << "State is valid!" << std::endl;
+            s.printDistribution();
         }
         else {
             std::cout << "State is invalid! Sum of norms is: " << s.getSumOfSquares() << std::endl;
@@ -74,9 +75,22 @@ void Simulator::handleLoad(std::istringstream& iss){
 void Simulator::handleGateCommand(std::string& gateName, std::istringstream& iss){
     size_t idx;
     std::vector<size_t> indices;
+    double angle = 0.0;
+    bool angleProvided = false;
 
-    while(iss >> idx) {
-        indices.push_back(idx);
+    std::string token;
+    while (iss >> token) {
+        if (isInteger(token)) {
+            indices.push_back(std::stoul(token));
+        } else {
+            try {
+                angle = std::stod(token);
+                angleProvided = true;
+            } catch (const std::invalid_argument&) {
+                std::cerr << "Invalid argument: " << token << " is not a valid index or angle." << std::endl;
+                return;
+            }
+        }
     }
 
     // first of all we check the validity of the indices
@@ -96,61 +110,23 @@ void Simulator::handleGateCommand(std::string& gateName, std::istringstream& iss
 
     bool app = false;
 
-    if (gateName == "paulix") {
-        Gate pauliX(GateType::PauliX);
-        pauliX.setIndices(indices);
-        app = pauliX.apply(s);
+    if (gateName == "rx" || gateName == "ry" || gateName == "rz") {
+        if (!angleProvided){
+            std::cerr << "Must provide an angle for rotation gate " << gateName  << "!" << std::endl;
+            return;
+        }
+        Gate rotationGate(gateName == "rx" ? GateType::Rx : gateName == "ry" ? GateType::Ry : GateType::Rz);
+        rotationGate.setIndices(indices);
+        rotationGate.setAngle(angle);
+        app = rotationGate.apply(s);
     }
-    else if (gateName == "pauliy") {
-        Gate pauliY(GateType::PauliY);
-        pauliY.setIndices(indices);
-        app = pauliY.apply(s);
+
+    else if (gateTypeMap.find(gateName) != gateTypeMap.end()) {
+        Gate gate(gateTypeMap.at(gateName));
+        gate.setIndices(indices);
+        app = gate.apply(s);
     }
-    else if (gateName == "pauliz"){
-        Gate pauliZ(GateType::PauliZ);
-        pauliZ.setIndices(indices);
-        app = pauliZ.apply(s);
-    }
-    else if (gateName == "hadamard") {
-        Gate hadamard(GateType::Hadamard);
-        hadamard.setIndices(indices);
-        app = hadamard.apply(s);
-    }
-    else if (gateName == "cnot") {
-        Gate cnot(GateType::CNot);
-        cnot.setIndices(indices);
-        app = cnot.apply(s);
-    }
-    else if (gateName == "toffoli" || gateName == "ccnot") {
-        Gate toffoli(GateType::Toffoli);
-        toffoli.setIndices(indices);
-        app = toffoli.apply(s);
-    }
-    else if (gateName == "s"){
-        Gate sg(GateType::S);
-        sg.setIndices(indices);
-        app = sg.apply(s);
-    }
-    else if (gateName == "t"){
-        Gate t(GateType::T);
-        t.setIndices(indices);
-        app = t.apply(s);
-    }
-    else if (gateName == "swap"){
-        Gate swap(GateType::Swap);
-        swap.setIndices(indices);
-        app = swap.apply(s);
-    }
-    else if (gateName == "fredkin" || gateName == "cswap"){
-        Gate fredkin(GateType::Fredkin);
-        fredkin.setIndices(indices);
-        app = fredkin.apply(s);
-    }
-    else if (gateName == "measure") {
-        Gate measure(GateType::Measure);
-        measure.setIndices(indices);
-        app = measure.apply(s);
-    }
+
     else if (customGates.find(gateName) != customGates.end()){
         customGates.at(gateName).setIndices(indices);
         app = customGates.at(gateName).apply(s); // we can't use the [] operator because Gate does not have a default constructor
