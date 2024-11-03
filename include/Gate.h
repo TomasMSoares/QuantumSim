@@ -85,7 +85,7 @@ private:
     bool applyRz(State& s);
     bool applyCustom(State& s);
 
-    size_t measure(State& s);
+    int measure(State& s);
 
     bool isUnitary(std::vector<std::vector<std::complex<double>>> matrix);
 };
@@ -105,3 +105,9 @@ static const std::unordered_map<std::string, GateType> gateTypeMap = {
     {"cswap", GateType::Fredkin},
     {"measure", GateType::Measure}
 };
+
+/*
+Random engine for the state measurements.
+Note: the engine is declared independent of the objects' lifetime to avoid reseeding.
+*/
+static std::default_random_engine randomEngine(std::random_device{}());

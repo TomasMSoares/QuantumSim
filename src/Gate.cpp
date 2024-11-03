@@ -9,6 +9,7 @@ void Gate::setAngle(double angle){
 }
 
 bool Gate::apply(State& s){
+    int outcome = 0; // we need to declare the outcome here because cases are not treated as scopes...
     switch (_type){
         case GateType::PauliX:
             return applyPauliX(s);
@@ -39,15 +40,14 @@ bool Gate::apply(State& s){
         case GateType::Custom:
             return applyCustom(s);
         case GateType::Measure:
-            if (!_indices.empty()){
-                std::cout << "Measured Qubit " << _indices[0] <<
-                ": \033[36m" << measure(s) << "\033[0m" << std::endl;
+            outcome = measure(s);
+            if (outcome != -1){
+                if (_indices.empty()){
+                    std::cout << "\033[95mMeasured System: " << "\033[96m" << binary(outcome, s.getQubitNr()) << "\033[0m" << std::endl;
+                }
+                return true;
             }
-            else {
-                std::cout << "Measured system: \033[36m" << 
-                binary(measure(s), s.getQubitNr()) << "\033[0m" << std::endl;
-            }
-            return true;
+            return false;
         default:
             std::cerr << "Unknown operation." << std::endl;
             return false;
@@ -338,58 +338,22 @@ bool Gate::applyCustom(State& s){
     return true;
 }
 
-size_t Gate::measure(State& s){
-    if (!(_indices.size() == 1 || _indices.empty())){
-        std::cerr << "Invalid index: Measurement can only be performed on one qubit or the whole system." << std::endl;
-        return 0;
+int Gate::measure(State& s){
+    if (_indices.size() > s.getQubitNr()){
+        std::cerr << "Too many qubits specified to measure!" << std::endl;
+        return -1;
     }
 
     // generate random value between 0 and 1:
     // https://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c
     std::uniform_real_distribution<double> unif(0.0, 1.0);
-    std::default_random_engine re(std::random_device{}());
-    double rand = unif(re);
+    double rand = unif(randomEngine);
     size_t outcome = 0;
+    size_t stateSize = 1 << s.getQubitNr();
 
-    if (_indices.size() == 1){
-        double p1 = 0.0; // probability for outcome 1
-        size_t target = _indices[0];
-        size_t stateSize = 1 << s.getQubitNr();
-        for (size_t i = 0; i < stateSize; ++i){
-            if (i & (1 << target)){
-                p1 += std::norm(s[i]);
-            }
-        }
-        // outcome is determined by where on the distribution the random number falls
-        if (rand < p1){
-            outcome = 1;
-        }
-        double normf = 0.0;
-        for (size_t i = 0; i < stateSize; ++i){
-            // we iterate over the state and check if the target bit of the index
-            // of the current iteration is equal to the outcome; if not, we set the
-            // amplitude to 0 (collapse of state)
-            if ((i & (1 << target)) != outcome << target) {
-                s[i] = 0;
-            }
-            else {
-                // we can add up the norms of the amplitudes that didn't get set
-                // to 0 here, this way we save iterations
-                normf += std::norm(s[i]);
-            }
-        }
-        // normalize the nonzero amplitudes
-        normf = std::sqrt(normf);
-        if (normf > 0) {
-            for (size_t i = 0; i < stateSize; ++i){
-                s[i] /= normf;
-            }
-        }
-    }
     // we are dealing with a measurement of the whole state
-    else {
+    if (_indices.empty()) {
         double cumulative_prob = 0.0;
-        size_t stateSize = 1 << s.getQubitNr();
         for (size_t i = 0; i < stateSize; ++i) {
             // check if the random value falls within the current range
             cumulative_prob += std::norm(s[i]);
@@ -402,6 +366,48 @@ size_t Gate::measure(State& s){
         std::complex<double> measured_amplitude = s[outcome] / std::abs(s[outcome]);
         for (size_t i = 0; i < stateSize; ++i) {
             s[i] = (i == outcome) ? measured_amplitude : 0;
+        }
+    }
+
+    else {
+        std::cout << "\033[95mMeasuring qubits...\033[0m" << std::endl;
+        for (size_t& target : _indices){
+            double p1 = 0.0;
+            double normFactor = 0.0;
+            
+            for (size_t i = 0; i < stateSize; ++i){
+                if (i & (1 << target)){
+                    p1 += std::norm(s[i]);
+                }
+            }
+            if (rand < p1){
+                outcome = 1;
+            }
+            else {
+                outcome = 0;
+            }
+            std::cout << "Qubit " << target << ": \033[96m" << outcome << "\033[0m" << std::endl;
+            double normf = 0.0;
+            for (size_t i = 0; i < stateSize; ++i){
+                // we iterate over the state and check if the target bit of the index
+                // of the current iteration is equal to the outcome; if not, we set the
+                // amplitude to 0 (collapse of state)
+                if ((i & (1 << target)) != outcome << target) {
+                    s[i] = 0;
+                }
+                else {
+                    // we can add up the norms of the amplitudes that didn't get set
+                    // to 0 here, this way we save iterations
+                    normf += std::norm(s[i]);
+                }
+            }
+            // normalize the nonzero amplitudes
+            normf = std::sqrt(normf);
+            if (normf > 0) {
+                for (size_t i = 0; i < stateSize; ++i){
+                    s[i] /= normf;
+                }
+            }
         }
     }
     return outcome;

@@ -121,7 +121,8 @@ void State::printDistribution() const{
             std::cout << ", ";
         }
         printed = true;
-        entry += std::to_string(prob);
+        std::string probString = std::to_string(prob);
+        entry += removeTrailingZeros(probString);
         std::cout << entry;
     }
     std::cout << std::endl;

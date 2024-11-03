@@ -90,7 +90,10 @@ std::complex<double> readComplex(std::string& str){
 std::string removeTrailingZeros(std::string& value){
     auto dotPos = value.find('.');
     if (dotPos != std::string::npos) {
-        value = value.substr(0, value.find_last_not_of('0') + 2);
+        value = value.substr(0, value.find_last_not_of('0') + 1);
+    }
+    if (value.back() == '.'){
+        value += '0';
     }
     return value;
 }
