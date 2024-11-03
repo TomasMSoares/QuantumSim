@@ -495,7 +495,7 @@ bool Gate::loadGate(std::string& filename){
     return true;
 }
 
-bool Gate::isUnitary(std::vector<std::vector<std::complex<double>>> matrix) {
+bool Gate::isUnitary(std::vector<std::vector<std::complex<double>>>& matrix) {
 
     if (matrix.empty()){
         std::cerr << "Matrix for unitary check can't be empty!" << std::endl;

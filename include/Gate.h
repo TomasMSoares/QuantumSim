@@ -85,11 +85,22 @@ private:
     bool applyRz(State& s);
     bool applyCustom(State& s);
 
+    /*
+    Measurement of qubits/the whole state.
+    */
     int measure(State& s);
 
-    bool isUnitary(std::vector<std::vector<std::complex<double>>> matrix);
+
+    /*
+    Before initializing the custom gates' matrices, we need to check that the
+    columns/rows are orthonormal vectors. Therefore passing this monstrocity as a parameter...
+    */
+    bool isUnitary(std::vector<std::vector<std::complex<double>>>& matrix);
 };
 
+/*
+Factored out string to GateType conversion.
+*/
 static const std::unordered_map<std::string, GateType> gateTypeMap = {
     {"paulix", GateType::PauliX},
     {"pauliy", GateType::PauliY},
