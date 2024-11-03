@@ -50,6 +50,6 @@ only one qubit in the zero state.
     t         <x>            :   Applies the T Gate to the given qubit.
     swap      <a> <b>        :   Applies the Swap Gate to the specified qubits.
     cnot      <c> <x>        :   Applies the CNOT Gate to qubit x, with c as control.
-    toffoli   <c1> <c2> <x>  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls.
+    toffoli    <c1> <c2> <x>  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls.
     fredkin   <c> <a> <b>    :   Applies the Fredkin Gate, i.e. swaps a and b if c is set.
     <custom>  <x>            :   Applies the given custom gate to the specified qubit(s).
