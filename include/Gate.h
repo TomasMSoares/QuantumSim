@@ -39,14 +39,16 @@ public:
 
     /*
     Loads a gate in matrix format from the given file.
-    The first line must specify the matrix dimensions: assuming the matrix is square,
-    it should be specified as "dim = <n>", meaning a nxn matrix will be read.
-    The lines of the file are the rows of the matrix, and the entries in a single
-    line should be separated by commas.
+    The first line must specify the qubit number the matrix 
+    acts upon: assuming the matrix is square, it should be 
+    specified as "qubits = <n>", meaning a 2^n x 2^n matrix 
+    will be read.
+    The lines of the file are the rows of the matrix.
+    
     Example:
-    dim = 2
-    0.5i, 0.3+0.4i
-    -1, 0
+    qubits = 1
+    0.5i 0.3+0.4i
+    -1 0
     */
     bool loadGate(std::string& filename);
 
@@ -71,6 +73,9 @@ private:
     This attribute should only be initialized in the case of a custom matrix.
     */
     std::vector<std::vector<std::complex<double>>> _matrix;
+
+
+    /* ### GATE LOGIC ### */
 
     bool applyPauliX(State& s);
     bool applyPauliY(State& s);

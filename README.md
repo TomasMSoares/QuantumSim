@@ -48,6 +48,8 @@ only one qubit in the zero state.
     hadamard  <x>            :   Applies the Hadamard Gate to the given qubit.
     s         <x>            :   Applies the S Gate to the given qubit.
     t         <x>            :   Applies the T Gate to the given qubit.
+    sdg       <x>            :   Applies the Sdg Gate (Inverse of S) to the given qubit."
+    tdg       <x>            :   Applies the Tdg Gate (Inverse of T) to the given qubit."
     swap      <a> <b>        :   Applies the Swap Gate to the specified qubits.
     cnot      <c> <x>        :   Applies the CNOT Gate to qubit x, with c as control.
     toffoli    <c1> <c2> <x>  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls.

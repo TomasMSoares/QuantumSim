@@ -471,35 +471,39 @@ bool Gate::loadGate(std::string& filename){
     line = trim(line);
     std::string label;
     char equals;
-    std::string dimStr;
+    std::string qubitStr;
 
-    // Parse the "dim = n" line
+    // Parse the "qubits = n" line
     auto equalPos = line.find('=');
     if (equalPos == std::string::npos) {
-        std::cerr << "Couldn't parse dimensions." << std::endl;
+        std::cerr << "Couldn't parse qubit number." << std::endl;
         return false;
     }
     label = line.substr(0, equalPos);
     label = trim(label);
-    dimStr = line.substr(equalPos + 1, line.size() - equalPos);
-    dimStr = trim(dimStr);
+    qubitStr = line.substr(equalPos + 1, line.size() - equalPos);
+    qubitStr = trim(qubitStr);
     
-    if (label != "dim") {
-        std::cerr << "Couldn't parse dimensions." << std::endl;
+    if (label != "qubits") {
+        std::cerr << "Couldn't parse qubit number." << std::endl;
         return false;
     }
 
-    size_t dim = std::stoul(dimStr);
-    if (dim < 2) {
-        std::cerr << "Matrix dimensions must be greater than 1." << std::endl;
+    size_t qubits ;
+    try {
+        qubits = std::stoul(qubitStr);
+        }
+    catch (std::invalid_argument& e){
+        std::cerr << "Couldn't parse qubit number: " << qubitStr << std::endl;
         return false;
     }
 
-    // taken from https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
-    if ((dim & (dim - 1)) != 0) {
-        std::cerr << "Matrix dimensions must be a power of 2." << std::endl;
+    if (qubits == 0) {
+        std::cerr << "Matrix dimensions must be greater than 0." << std::endl;
         return false;
     }
+
+    size_t dim = 1 << qubits;
 
     // Initialize the matrix for row insertion
     std::vector<std::vector<std::complex<double>>> matrix(dim);
@@ -510,21 +514,33 @@ bool Gate::loadGate(std::string& filename){
             std::cerr << "Too many rows provided for matrix dimensions: " << dim << "x" << dim << std::endl;
             return false;
         }
+        
         std::vector<std::complex<double>> row(dim);
         std::string valueStr;
         std::istringstream rowStream(line);
         size_t colIdx = 0;
+
         while (rowStream >> valueStr){
             if (colIdx >= dim){
-                std::cerr << "Too many values provided for row " << rowIdx << std::endl;
+                std::cerr << "Too many values provided for row " << rowIdx << "." << std::endl;
                 return false;
             }
             std::complex<double> value = readComplex(valueStr);
             row[colIdx] = value;
             ++colIdx;
         }
+
+        if (colIdx < dim) {
+            std::cerr << "Not enough values provided for row " << rowIdx << "." << std::endl;
+            return false;
+        }
         matrix[rowIdx] = row;
         ++rowIdx;
+    }
+
+    if (rowIdx < dim) {
+        std::cerr << "Not enough rows provided." << std::endl;
+        return false;
     }
 
     if (!isUnitary(matrix)){

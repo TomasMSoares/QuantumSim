@@ -166,6 +166,8 @@ void Simulator::listCommands(){
     std::cout << "\033[96mhadamard  \033[36m<x>\033[0m            :   Applies the Hadamard Gate to the given qubit." << std::endl;
     std::cout << "\033[96ms         \033[36m<x>\033[0m            :   Applies the S Gate to the given qubit." << std::endl;
     std::cout << "\033[96mt         \033[36m<x>\033[0m            :   Applies the T Gate to the given qubit." << std::endl;
+    std::cout << "\033[96msdg       \033[36m<x>\033[0m            :   Applies the Sdg Gate (Inverse of S) to the given qubit." << std::endl;
+    std::cout << "\033[96mtdg       \033[36m<x>\033[0m            :   Applies the Tdg Gate (Inverse of T) to the given qubit." << std::endl;
     std::cout << "\033[96mswap      \033[36m<a> <b>\033[0m        :   Applies the Swap Gate to the specified qubits." << std::endl;
     std::cout << "\033[96mcnot      \033[36m<c> <x>\033[0m        :   Applies the CNOT Gate to qubit x, with c as control." << std::endl;
     std::cout << "\033[96mtoffoli   \033[36m<c1> <c2> <x>\033[0m  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls." << std::endl;
