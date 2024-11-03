@@ -19,24 +19,23 @@ The Simulator expects the input file for the initial state in the following way:
     - If the number of read amplitudes isn't equal to 2^{number of qubits}, the input will fail.
 
 ## Starting the program
-    Simulator arguments:
-    -s  :   Vector input file containing the number n of qubits for the simulation,
-            specified in the first line of the file as qubits=<n>, and the 
-            associated 2^n amplitudes for the possible states. The (complex)
-            amplitudes must be given in decimal format, e.g. '0.5', '0.3+0.05i',
-            'i', '-0.123'. If more (or less) than 2^n amplitudes are read, the
-            simulator will throw an error.
-    -q  :   Number of qubits for the simulator, assuming the starting state is
-            the zero state. Will be ignored if a vector input file is specified.
-    -h  :   Prints out this help message.
+Simulator arguments:
+-s  :   Vector input file containing the number n of qubits for the simulation,
+        specified in the first line of the file as qubits=<n>, and the 
+        associated 2^n amplitudes for the possible states. The (complex)
+        amplitudes must be given in decimal format, e.g. '0.5', '0.3+0.05i',
+        'i', '-0.123'. If more (or less) than 2^n amplitudes are read, the
+        simulator will throw an error.
+-q  :   Number of qubits for the simulator, assuming the starting state is
+        the zero state. Will be ignored if a vector input file is specified.
+-h  :   Prints out this help message.
 
-    Usage:  ./QuantumSimulator -s <file containing starting state>
+Usage:  ./QuantumSimulator -s <file containing starting state>
 
-    If no input file or qubit number are specified, the simulation will start with
-    only one qubit in the zero state.
+If no input file or qubit number are specified, the simulation will start with
+only one qubit in the zero state.
 
 ## Available commands
-    '''
     list                     :   Lists available commands.
     exit                     :   Exits the simulator.
     check                    :   Checks if the sum of the squared amplitudes is equal to 1 and
@@ -54,4 +53,3 @@ The Simulator expects the input file for the initial state in the following way:
     toffoli   <c1> <c2> <x>  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls.
     fredkin   <c> <a> <b>    :   Applies the Fredkin Gate, i.e. swaps a and b if c is set.
     <custom>  <x>            :   Applies the given custom gate to the specified qubit(s).
-    '''
