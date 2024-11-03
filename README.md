@@ -19,15 +19,15 @@ The Simulator expects the input file for the initial state in the following way:
     - If the number of read amplitudes isn't equal to 2^{number of qubits}, the input will fail.
 
 ## Starting the program
-Simulator arguments:
+Simulator arguments:\
 -s  :   Vector input file containing the number n of qubits for the simulation,
-        specified in the first line of the file as qubits=<n>, and the 
+        specified in the first line of the file as qubits=<n>, and the
         associated 2^n amplitudes for the possible states. The (complex)
         amplitudes must be given in decimal format, e.g. '0.5', '0.3+0.05i',
         'i', '-0.123'. If more (or less) than 2^n amplitudes are read, the
-        simulator will throw an error.
+        simulator will throw an error.\
 -q  :   Number of qubits for the simulator, assuming the starting state is
-        the zero state. Will be ignored if a vector input file is specified.
+        the zero state. Will be ignored if a vector input file is specified.\
 -h  :   Prints out this help message.
 
 Usage:  ./QuantumSimulator -s "somefile.txt"
