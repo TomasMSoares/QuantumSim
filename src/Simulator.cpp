@@ -170,6 +170,9 @@ void Simulator::listCommands(){
     std::cout << "\033[96mcnot      \033[36m<c> <x>\033[0m        :   Applies the CNOT Gate to qubit x, with c as control." << std::endl;
     std::cout << "\033[96mtoffoli   \033[36m<c1> <c2> <x>\033[0m  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls." << std::endl;
     std::cout << "\033[96mfredkin   \033[36m<c> <a> <b>\033[0m    :   Applies the Fredkin Gate, i.e. swaps a and b if c is set." << std::endl;
+    std::cout << "\033[96mrx        \033[36m<x> <θ>\033[0m        :   Rotates the state of the qubit around the X-axis by θ radians." << std::endl;
+    std::cout << "\033[96mry        \033[36m<x> <θ>\033[0m        :   Rotates the state of the qubit around the Y-axis by θ radians." << std::endl;
+    std::cout << "\033[96mrz        \033[36m<x> <θ>\033[0m        :   Rotates the state of the qubit around the Z-axis by θ radians." << std::endl; 
     std::cout << "\033[96m<custom>  \033[36m<x>\033[0m            :   Applies the given custom gate to the specified qubit(s)." << std::endl;
 }
 

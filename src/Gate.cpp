@@ -190,9 +190,10 @@ bool Gate::applyT(State& s){
     size_t target = _indices[0];
     size_t stateSize = 1 << s.getQubitNr();
 
-    // M_PI is defined in the math.h header
-    // we are using Euler's formula for simplicity
-    std::complex<double> phase(std::cos(M_PI/4.0), std::sin(M_PI/4.0));
+    // We are using Euler's Formula for simplicity:
+    // https://en.wikipedia.org/wiki/Euler%27s_formula
+    // Since cos(pi/4) = sin(pi/4) = sqrt(2)/2, we can compute it directly.
+    std::complex<double> phase(std::sqrt(2) / 2, std::sqrt(2) / 2);
     for (size_t i = 0; i < stateSize; ++i){
         if (i & (1 << target)){
             s[i] *= phase;
