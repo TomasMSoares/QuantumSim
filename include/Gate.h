@@ -16,12 +16,14 @@ enum class GateType {
     Toffoli,
     S,
     T,
-    Swap,
-    Fredkin,
-    Measure,
+    Sdg,
+    Tdg,
     Rx,
     Ry,
     Rz,
+    Swap,
+    Fredkin,
+    Measure,
     Custom
 };
 
@@ -78,6 +80,8 @@ private:
     bool applyToffoli(State& s);
     bool applyS(State& s);
     bool applyT(State& s);
+    bool applySdg(State& s);
+    bool applyTdg(State& s);
     bool applySwap(State& s);
     bool applyFredkin(State& s);
     bool applyRx(State& s);
@@ -103,14 +107,25 @@ Factored out string to GateType conversion.
 */
 static const std::unordered_map<std::string, GateType> gateTypeMap = {
     {"paulix", GateType::PauliX},
+    {"x", GateType::PauliX},
+    {"y", GateType::PauliY},
+    {"z", GateType::PauliZ},
     {"pauliy", GateType::PauliY},
     {"pauliz", GateType::PauliZ},
     {"hadamard", GateType::Hadamard},
+    {"h", GateType::Hadamard},
     {"s", GateType::S},
     {"t", GateType::T},
+    {"sdg", GateType::Sdg},
+    {"tdg", GateType::Tdg},
+    {"rx", GateType::Rx},
+    {"ry", GateType::Ry},
+    {"rz", GateType::Rz},
     {"cnot", GateType::CNot},
+    {"cx", GateType::CNot},
     {"toffoli", GateType::Toffoli},
     {"ccnot", GateType::Toffoli},
+    {"ccx", GateType::Toffoli},
     {"swap", GateType::Swap},
     {"fredkin", GateType::Fredkin},
     {"cswap", GateType::Fredkin},

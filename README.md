@@ -52,7 +52,7 @@ only one qubit in the zero state.
     cnot      <c> <x>        :   Applies the CNOT Gate to qubit x, with c as control.
     toffoli    <c1> <c2> <x>  :   Applies the Toffoli Gate to qubit x, with c1 and c2 as controls.
     fredkin   <c> <a> <b>    :   Applies the Fredkin Gate, i.e. swaps a and b if c is set.
-    rx       <x> <θ>        :   Rotates the state of the qubit around the X-axis by θ radians.
-    ry       <x> <θ>        :   Rotates the state of the qubit around the Y-axis by θ radians.
-    rz       <x> <θ>        :   Rotates the state of the qubit around the Z-axis by θ radians. 
+    rx       <x> <θ>         :   Rotates the state of the qubit around the X-axis by θ radians.
+    ry       <x> <θ>         :   Rotates the state of the qubit around the Y-axis by θ radians.
+    rz       <x> <θ>         :   Rotates the state of the qubit around the Z-axis by θ radians. 
     <custom>  <x>            :   Applies the given custom gate to the specified qubit(s).

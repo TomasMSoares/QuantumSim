@@ -27,16 +27,20 @@ bool Gate::apply(State& s){
             return applyS(s);
         case GateType::T:
             return applyT(s);
-        case GateType::Swap:
-            return applySwap(s);
-        case GateType::Fredkin:
-            return applyFredkin(s);
+        case GateType::Sdg:
+            return applySdg(s);
+        case GateType::Tdg:
+            return applyTdg(s);
         case GateType::Rx:
             return applyRx(s);
         case GateType::Ry:
             return applyRy(s);
         case GateType::Rz:
             return applyRz(s);
+        case GateType::Swap:
+            return applySwap(s);
+        case GateType::Fredkin:
+            return applyFredkin(s);
         case GateType::Custom:
             return applyCustom(s);
         case GateType::Measure:
@@ -194,6 +198,43 @@ bool Gate::applyT(State& s){
     // https://en.wikipedia.org/wiki/Euler%27s_formula
     // Since cos(pi/4) = sin(pi/4) = sqrt(2)/2, we can compute it directly.
     std::complex<double> phase(std::sqrt(2) / 2, std::sqrt(2) / 2);
+    for (size_t i = 0; i < stateSize; ++i){
+        if (i & (1 << target)){
+            s[i] *= phase;
+        }
+    }
+    return true;
+}
+
+bool Gate::applySdg(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: Sdg Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    size_t stateSize = 1 << s.getQubitNr();
+
+    std::complex<double> phase(0, -1);
+    for (size_t i = 0; i < stateSize; ++i) {
+        if (i & (1 << target)){
+            s[i] *= phase;
+        }
+    }
+    return true;
+}
+
+bool Gate::applyTdg(State& s){
+    if (_indices.size() != 1){
+        std::cerr << "Invalid index: Tdg Gate can only act on one qubit." << std::endl;
+        return false;
+    }
+    size_t target = _indices[0];
+    size_t stateSize = 1 << s.getQubitNr();
+
+    // We are using Euler's Formula for simplicity:
+    // https://en.wikipedia.org/wiki/Euler%27s_formula
+    // Since cos(pi/4) = sin(pi/4) = sqrt(2)/2, we can compute it directly.
+    std::complex<double> phase(std::sqrt(2) / 2, -std::sqrt(2) / 2);
     for (size_t i = 0; i < stateSize; ++i){
         if (i & (1 << target)){
             s[i] *= phase;

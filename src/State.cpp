@@ -22,16 +22,29 @@ std::complex<double>& State::operator[] (size_t idx){
 
 void State::printState() const{
     const size_t possibleStates = 1 << _qubitNr;
-    std::cout << "\033[33mState:\033[0m" << std::endl;
+    std::vector<size_t> nonZeroIndices;
     for (size_t i = 0; i < possibleStates; ++i){
-        std::string entry = toString(_state[i]) + "*";
-        entry += "\033[96m|" + binary(i, _qubitNr) + ">\033[0m";
-        if (i < possibleStates - 1){
-             entry += " + ";
+        double prob = std::norm(_state[i]);
+        if (std::abs(prob) > EPS) {
+            nonZeroIndices.push_back(i);
         }
-        std::cout << entry;
     }
-    std::cout << std::endl;
+
+    std::ostringstream output;
+    output << "\033[33mDistribution:\033[0m" << std::endl;
+    bool printed = false; // just to separate the probabilities by commas
+
+    for (size_t i : nonZeroIndices){
+        std::string binaryRep = binary(i, _qubitNr);
+        std::string entry = toString(_state[i]);
+        if (printed) {
+            output << " + ";
+        }
+        output << entry << "*\033[96m|" << binaryRep << ">\033[0m";
+        printed = true;
+    }
+
+    std::cout << output.str() << std::endl;
 }
 
 bool State::parseVector(const std::string& filename) {
@@ -108,22 +121,27 @@ bool State::parseVector(const std::string& filename) {
 
 void State::printDistribution() const{
     const size_t possibleStates = 1 << _qubitNr;
-    std::cout << "\033[33mDistribution:\033[0m" << std::endl;
+    std::vector<size_t> nonZeroIndices;
+    for (size_t i = 0; i < possibleStates; ++i){
+        double prob = std::norm(_state[i]);
+        if (std::abs(prob) > EPS) {
+            nonZeroIndices.push_back(i);
+        }
+    }
+
+    std::ostringstream output;
+    output << "\033[33mDistribution:\033[0m" << std::endl;
     bool printed = false; // just to separate the probabilities by commas
 
-    for (size_t i = 0; i < possibleStates; ++i){
-        std::string entry = "\033[96m|" + binary(i, _qubitNr) + ">\033[0m" + ":";
+    for (size_t i : nonZeroIndices){
+        std::string binaryRep = binary(i, _qubitNr);
         double prob = std::norm(_state[i]);
-        if (std::abs(prob) < EPS){
-             continue;
-        }
         if (printed) {
-            std::cout << ", ";
+            output << ", ";
         }
+        output << "\033[96m|" << binaryRep << ">\033[0m: " << prob;
         printed = true;
-        std::string probString = std::to_string(prob);
-        entry += removeTrailingZeros(probString);
-        std::cout << entry;
     }
-    std::cout << std::endl;
+
+    std::cout << output.str() << std::endl;
 }

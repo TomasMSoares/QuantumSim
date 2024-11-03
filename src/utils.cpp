@@ -1,13 +1,11 @@
 #include "utils.h"
 
 std::string binary(size_t value, const size_t bitNr){
-    std::string res{};
-    while (value > 0) {
-        res = std::to_string(value % 2) + res;
+    std::string res(bitNr, '0');
+    size_t idx = bitNr - 1;
+    while (value > 0 && idx >= 0){
+        res[idx--] = '0' + (value % 2);
         value /= 2;
-    }
-    while (res.length() < bitNr){
-         res = '0' + res;
     }
     return res;
 }
