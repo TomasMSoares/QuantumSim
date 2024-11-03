@@ -30,7 +30,7 @@ Simulator arguments:
         the zero state. Will be ignored if a vector input file is specified.
 -h  :   Prints out this help message.
 
-Usage:  ./QuantumSimulator -s <file containing starting state>
+Usage:  ./QuantumSimulator -s "somefile.txt"
 
 If no input file or qubit number are specified, the simulation will start with
 only one qubit in the zero state.
