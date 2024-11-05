@@ -31,7 +31,7 @@ void State::printState() const{
     }
 
     std::ostringstream output;
-    output << "\033[33mDistribution:\033[0m" << std::endl;
+    output << "\033[33mState:\033[0m" << std::endl;
     bool printed = false; // just to separate the probabilities by commas
 
     for (size_t i : nonZeroIndices){
